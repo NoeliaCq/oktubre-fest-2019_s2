@@ -1,0 +1,68 @@
+import jarras.*
+import marcas.*
+import carpas.*
+import personas.*
+
+test "Octubre Fest" {
+	//escenario
+	graduacionReglamentaria.graduacionMundial(0.5)
+	
+	const hofbrau = new Roja(paisDeOrigen = belgica, contenidoDeLupulo = 5)
+	const corona = new Rubia(graduacion = 0.08, paisDeOrigen = mexico, contenidoDeLupulo = 6)
+	const guinness = new Negra(paisDeOrigen = irlanda, contenidoDeLupulo = 3)
+	
+	const jarra1 = new Jarra(capacidad= 0.5, marca = hofbrau)
+	const jarra2 = new Jarra(capacidad= 1, marca = corona)
+	const jarra3 = new Jarra(capacidad= 0.5, marca = guinness)
+	
+	const herculesPoirot = new Belga(peso = 105, escuchaMusicaTradi = true, paisDeOrigen = belgica, nivelDeAguante = 10)
+	const jurgen = new Aleman(peso = 97, escuchaMusicaTradi = true, paisDeOrigen = alemania, nivelDeAguante = 70)
+	jurgen.comprarJarras([jarra1, jarra2, jarra3])
+	
+	const carpaIrlandesa = new CarpaCervecera(limiteDeGente=200, tieneBanda= true, marcaQueVende = guinness)
+	
+	const carpaMexicana = new CarpaCervecera(limiteDeGente=100, tieneBanda= false, marcaQueVende = corona)
+	
+	const carpaBelga = new CarpaCervecera(limiteDeGente=1, tieneBanda= true, marcaQueVende = hofbrau)
+	
+	herculesPoirot.entrarACarpa(carpaBelga)
+	
+	//tests
+	assert.equals(0.3125, jarra1.contenidoDeAlcohol())
+	assert.equals(0.08, jarra2.contenidoDeAlcohol())
+	assert.equals(0.25, jarra3.contenidoDeAlcohol())
+	
+	assert.equals(0.6425, jurgen.totalDeAlcohol())
+	
+	assert.notThat(jurgen.estaEbria())
+	
+	assert.that(jurgen.leGustaEstaCerveza(corona))
+	assert.that(jurgen.leGustaEstaCerveza(hofbrau))
+	assert.that(jurgen.leGustaEstaCerveza(guinness))
+	
+	assert.that(jurgen.quiereEntrarALaCarpa(carpaIrlandesa))
+	assert.notThat(jurgen.quiereEntrarALaCarpa(carpaMexicana)) //porque no tiene banda
+	assert.notThat(jurgen.quiereEntrarALaCarpa(carpaBelga)) //porque hay una persona adentro (numero impar)
+	
+	assert.that(carpaIrlandesa.dejaIngresarA(jurgen))
+	assert.that(carpaIrlandesa.dejaIngresarA(herculesPoirot))
+	assert.that(carpaMexicana.dejaIngresarA(jurgen))
+	assert.that(carpaMexicana.dejaIngresarA(herculesPoirot))
+	assert.notThat(carpaBelga.dejaIngresarA(herculesPoirot)) //porque ya entró
+	assert.notThat(carpaBelga.dejaIngresarA(jurgen)) // porque le puse límite de gente en 1
+	
+	//jurgen.entrarACarpa(carpaBelga) // tira error porque no lo deja ingresar
+	carpaBelga.venderJarraA(0.5, herculesPoirot)
+	//carpaMexicana.venderJarraA(0.5, jurgen) //tira error porque no está en la carpa
+	
+	assert.equals(0, carpaBelga.cantDeEbriosEmpedernidos())
+	assert.notThat(jurgen.esPatriota())
+	
+}
+
+
+
+
+
+
+
